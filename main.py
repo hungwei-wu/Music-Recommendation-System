@@ -5,36 +5,39 @@ from collections import Counter
 from sklearn.feature_extraction import DictVectorizer, FeatureHasher
 from sklearn.neighbors import KNeighborsClassifier
 import scipy.sparse as sp
+import time
 
 
 if __name__ == "__main__":
     #chunks = file_io.read_lastfm_user_art_file("data/userid-timestamp-artid-artname-traid-traname.tsv")
-    chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
-    # demonstration of sequential reading
-
-
+    #chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
+    chunks = file_io.read_lastfm_user_art_file("data/tmp.tsv")
     vectorizer = FeatureHasher()
     user_df = {}
-    for chunk in chunks:
 
+    start_time = time.time()
+    for i, chunk in enumerate(chunks):
+        #if i >= 100000:
+        #    break
+        #print(chunk)
         df1 = file_io.create_track_id2(chunk)
         users = df1.groupby('userid')['trackid2']
         for user_id, grouped_value in users:
-            print(dict(Counter(grouped_value)))
-            tmp = vectorizer.transform([dict(Counter(grouped_value))])
-            #print(tmp)
-            user_df[user_id] = user_df.get(user_id, 0) + tmp
-
-            #user_df.loc[user[0], :] = tmp
-    print(user_df)
+            #print(dict(Counter(grouped_value)))
+            transformed_vec = vectorizer.transform([dict(Counter(grouped_value))])
+            user_df[user_id] = user_df.get(user_id, 0) + transformed_vec
+    print("parsing file using {0}".format(time.time() - start_time))
+    #print(user_df)
     X = sp.vstack(user_df.values())
-    print(X)
+    #print(X)
 
+    start_time = time.time()
     clf = KNeighborsClassifier(n_neighbors=1)
     clf.fit(X, list(range(X.shape[0])))
-    print(clf.predict(user_df["user_000001"]))
+    print(clf.predict(user_df["user_000003"]))
     #sp.bsr_matrix([[87516, 107016, 259247]], shape=(1, 1048576))
     #X = zeros()
+    print("training and predict using {0}".format(time.time() - start_time))
 
 
 

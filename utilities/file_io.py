@@ -5,7 +5,8 @@ import config
 def read_lastfm_user_art_file(file_name):
     df = pd.read_csv(file_name, sep='\t',
                      names=['userid', 'timestamp', 'artid', 'artname', 'traid', 'traname'],
-                     chunksize=config.file_io_config["chunk_size"])
+                     chunksize=config.file_io_config["chunk_size"],
+                     dtype=object)
     return df
 
 
