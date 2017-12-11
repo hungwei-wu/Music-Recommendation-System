@@ -3,7 +3,7 @@ from sklearn.feature_extraction import FeatureHasher
 from sklearn.neighbors import KNeighborsClassifier
 import time
 from preprocessing.preprocessor import Preprocessor
-from LyricsProcessor import LyricsProcessor
+from lyricsprocessing.LyricsProcessor import LyricsProcessor
 
 if __name__ == "__main__":
     #chunks = file_io.read_lastfm_user_art_file("data/userid-timestamp-artid-artname-traid-traname.tsv")
@@ -12,13 +12,13 @@ if __name__ == "__main__":
     # read songs
     vectorizer = FeatureHasher()
     pre = Preprocessor(chunks, vectorizer)
-    songs = pre.read_songs(20)
+    songs = pre.read_songs(100)
     print(songs)
-
+    """
     # reset file reader
     #chunks = file_io.read_lastfm_user_art_file("data/tmp.tsv")
     #pre.reset_file_reader(chunks)
-
+    
     # read user song mapping
     pre.read_user_songs(1000)
     # convert to user-song matrix
@@ -30,10 +30,11 @@ if __name__ == "__main__":
     print(clf.predict(pre.user_song_dict["user_000001"]))
 
     print("training and predict using {0}".format(time.time() - start_time))
-
+    """
+    song_content = [ (artist,song.split('(')[0]) for (artist,song) in zip(list(songs['artname']), list(songs['traname']))]
     
-    #song_content = [ (artist,song) for (artist,song) in zip(list(songs['artname']), list(songs['traname']))]
     # temporary song_list
+    """
     song_content = [('Underworld', 'Boy, Boy, Boy'),
                     ('Underworld', 'Crocodile'),
                     ('Led Zeppelin','Stairway to heaven'),
@@ -43,10 +44,13 @@ if __name__ == "__main__":
                     ('Demi Lovato','Sorry Not Sorry'), 
                     ('Pink','What About Us')
                     ]
+    """
     l_pre = LyricsProcessor(song_content)
     l_pre.tfidf_transform()
+    nf= l_pre.not_found
     l_pre.word2vec()
-    test1=l_pre.get_w2v_from_songname('Boy, Boy, Boy')
-    test2=l_pre.get_w2v_from_songname('Crocodile')
+    test1=l_pre.get_w2v_from_songname('Someday You Will Be Loved')
     l_pre.write_song_word2vec()
+    
+   
     
