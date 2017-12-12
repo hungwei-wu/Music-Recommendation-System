@@ -23,6 +23,7 @@ if __name__ == "__main__":
     pre.read_user_songs(1000)
     # convert to user-song matrix
     X = pre.get_user_song_matrix()
+    print (X.shape)
 
     start_time = time.time()
     clf = KNeighborsClassifier(n_neighbors=1)
