@@ -13,6 +13,7 @@ if __name__ == "__main__":
     vectorizer = FeatureHasher()
     pre = Preprocessor(chunks, vectorizer)
     songs = pre.read_songs(100)
+    #songs = songs[15:21]
     print(songs)
     """
     # reset file reader
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     l_pre.tfidf_transform()
     nf= l_pre.not_found
     l_pre.word2vec()
-    test1=l_pre.get_w2v_from_songname('Someday You Will Be Loved')
+    #test1=l_pre.get_w2v_from_songname('Someday You Will Be Loved')
     l_pre.write_song_word2vec()
     
    

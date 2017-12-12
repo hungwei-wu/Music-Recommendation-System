@@ -21,8 +21,8 @@ class LyricsProcessor(object):
         self.songs_info = songs_info
         self.tfidf_vectorizer = TfidfVectorizer(stop_words='english')
         self.TfIdf_vec = []
-        self.song_word2vec = pd.DataFrame(columns=['Lyrics'])
-        self.corpus_df = pd.DataFrame(columns=['Song_name','Lyrics']) 
+        self.song_word2vec = pd.DataFrame()
+        self.corpus_df = pd.DataFrame(columns=['Song_name']) 
         self.not_found = {}
         
     def tfidf_transform(self):
@@ -52,10 +52,12 @@ class LyricsProcessor(object):
             translator.translate(sorted_x[idx][0])
             """
             try:
-                sentence = [ pretrain_model[sorted_x[idx][0]] for idx in sort_index]
+                sentence = [pretrain_model[sorted_x[idx][0]] for idx in sort_index]
+                flat_sentence = [item for sublist in sentence for item in sublist]
             except: 
                 next
-            tmp = pd.DataFrame({'Lyrics':[np.asarray(sentence)]},index = [list(self.corpus_df['Song_name'])[i]] )
+            #tmp = pd.DataFrame({'Lyrics':[np.asarray(sentence)]},index = [list(self.corpus_df['Song_name'])[i]] )
+            tmp = pd.DataFrame(np.reshape(np.asarray(flat_sentence),(1,len(flat_sentence))),index = [list(self.corpus_df['Song_name'])[i]] )
             self.song_word2vec=pd.concat([self.song_word2vec,tmp])
             
     def get_w2v_from_songname(self,index):
