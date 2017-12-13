@@ -28,5 +28,6 @@ def predict_by_factorize(user_item):
 def recommend_all(user_item, pred):
     user_item = user_item.todense()
     unseen = user_item == 0
-    print(unseen)
+    
+    print(np.inner(user_item, unseen))
 

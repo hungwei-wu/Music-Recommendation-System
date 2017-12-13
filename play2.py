@@ -1,5 +1,5 @@
 from utilities import file_io
-from sklearn.feature_extraction import FeatureHasher
+from sklearn.feature_extraction import DictVectorizer, FeatureHasher
 from sklearn.neighbors import KNeighborsClassifier
 import time
 from preprocessing.preprocessor import Preprocessor
@@ -18,21 +18,22 @@ if __name__ == "__main__":
     #
     # #songs = pre.read_songs(10)
     # #print(songs)
-    vectorizer = FeatureHasher(n_features=10, non_negative=True)
+    #vectorizer = FeatureHasher(n_features=10, non_negative=True)
+    vectorizer = DictVectorizer()
     # reset file reader
-    #chunks = file_io.read_lastfm_user_art_file("data/test_very_short.tsv")
-    chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
+    chunks = file_io.read_lastfm_user_art_file("data/test_very_short.tsv")
+    #chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
     pre = Preprocessor(chunks, vectorizer)
     pre.reset_file_reader(chunks)
 
     # read user song mapping
-    pre.read_user_songs(500)
+    pre.read_user_songs(30)
     # convert to user-song matrix
     X = pre.get_user_song_matrix()
-    #print(X.todense())
+    print(X.todense())
     dist = pairwise_distances(X)
     pred = recommendation.predict(X, dist)
-    #print(pred)
+    print(pred)
 
     print(recommendation.predict_by_factorize(X))
     recommendation.recommend_all(X, pred)

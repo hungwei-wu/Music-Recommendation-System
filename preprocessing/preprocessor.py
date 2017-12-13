@@ -1,16 +1,17 @@
 from collections import Counter
 import scipy.sparse as sp
+from collections import defaultdict
 
 
 class Preprocessor(object):
     def __init__(self, chunks, vectorizer):
         self.chunks = chunks
         self.vectorizer = vectorizer
-        self.user_song_dict = {}
+        self.user_song_dict = defaultdict(Counter)
 
     def read_songs(self, n_record):
         df = self.chunks.read(n_record)
-        return df[['artname','traname']]
+        return df[['artname', 'traname']]
 
     def read_user_songs(self, n_records):
         df = self.chunks.read(n_records)
@@ -18,11 +19,12 @@ class Preprocessor(object):
         df = self._create_track_id2(df)
         users = df.groupby('userid')['trackid2']
         for user_id, grouped_value in users:
-            transformed_vec = self.vectorizer.transform([dict(Counter(grouped_value))])
-            self.user_song_dict[user_id] = self.user_song_dict.get(user_id, 0) + transformed_vec
+            self.user_song_dict[user_id].update(Counter(grouped_value))
 
     def get_user_song_matrix(self):
-        return sp.vstack(self.user_song_dict.values())
+        # change here to waive effort to fit
+        X = self.vectorizer.fit_transform(self.user_song_dict.values())
+        return X
 
     def _create_track_id2(self, df):
         """(experimenting) create unique id by (artname, traname) pair"""
@@ -33,6 +35,8 @@ class Preprocessor(object):
     def reset_file_reader(self, chunks):
         #chunks.close()
         self.chunks = chunks
+
+
 
 
 
