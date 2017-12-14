@@ -1,57 +1,51 @@
 from utilities import file_io
-from sklearn.feature_extraction import FeatureHasher
-from sklearn.neighbors import KNeighborsClassifier
 import time
 from preprocessing.preprocessor import Preprocessor
 from lyricsprocessing.LyricsProcessor import LyricsProcessor
-
+from sklearn.feature_extraction import FeatureHasher
 if __name__ == "__main__":
-    #chunks = file_io.read_lastfm_user_art_file("data/userid-timestamp-artid-artname-traid-traname.tsv")
-    chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
-
-    # read songs
+    chunks = file_io.read_lastfm_user_art_file("data/lastfm-dataset-1K/userid-timestamp-artid-artname-traid-traname.tsv")
+    #chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
     vectorizer = FeatureHasher()
     pre = Preprocessor(chunks, vectorizer)
-    songs = pre.read_songs(100)
+    """
+    # Check chunks size : tot_len = 19098862
+    len_perchunk = 1000000
+    tot_len = 0;
+    while len_perchunk == 1000000:
+        songs = pre.read_songs(1000000)
+        len_perchunk =len(songs.index)
+        tot_len += len_perchunk
+    """
+    # Q: if song repeat ??
     #songs = songs[15:21]
-    print(songs)
-    """
-    # reset file reader
-    #chunks = file_io.read_lastfm_user_art_file("data/tmp.tsv")
-    #pre.reset_file_reader(chunks)
-    
-    # read user song mapping
-    pre.read_user_songs(1000)
-    # convert to user-song matrix
-    X = pre.get_user_song_matrix()
+    batch_num = 100*20
+    batch_size = 10000
+    csv_song_list = []
+    seen_list = {}
+    for i in range(batch_num):
+        print("================"+str(i)+" Batch =======================")
+        # read songs
+        songs = pre.read_songs(batch_size)
+        print(songs)
+        
+        # global repeat
+        song_content = [ (artist,song.split('(')[0]) for (artist,song) in zip(list(songs['artname']), list(songs['traname'])) if song not in seen_list.keys() ]
+        for (artist,song) in song_content:
+            seen_list[song]=''
+        # temporary song_list
 
-    start_time = time.time()
-    clf = KNeighborsClassifier(n_neighbors=1)
-    clf.fit(X, list(range(X.shape[0])))
-    print(clf.predict(pre.user_song_dict["user_000001"]))
-
-    print("training and predict using {0}".format(time.time() - start_time))
-    """
-    song_content = [ (artist,song.split('(')[0]) for (artist,song) in zip(list(songs['artname']), list(songs['traname']))]
-    
-    # temporary song_list
-    """
-    song_content = [('Underworld', 'Boy, Boy, Boy'),
-                    ('Underworld', 'Crocodile'),
-                    ('Led Zeppelin','Stairway to heaven'),
-                    ('Imagine Dragons','Thunder'),
-                    ('Sam Smith', 'Too Good At Goodbyes'),
-                    ('Ed Sheeran','Perfect'),
-                    ('Demi Lovato','Sorry Not Sorry'), 
-                    ('Pink','What About Us')
-                    ]
-    """
-    l_pre = LyricsProcessor(song_content)
-    l_pre.tfidf_transform()
-    nf= l_pre.not_found
-    l_pre.word2vec()
-    #test1=l_pre.get_w2v_from_songname('Someday You Will Be Loved')
-    l_pre.write_song_word2vec()
-    
-   
+        l_pre = LyricsProcessor(song_content)
+        l_pre.tfidf_transform()
+        nf= l_pre.not_found
+        l_pre.word2vec()
+        #test1=l_pre.get_w2v_from_songname('Someday You Will Be Loved')
+        l_pre.write_song_word2vec()
+        csv_song_list.extend(list(l_pre.write_to_csv.keys()))
+        #(song_not_found, song_written , written_num) = l_pre.written_info_batch()
+        # check the last chunck
+        if len(songs.index) < batch_size:
+            print ("Total num :"+ str(i * batch_size + len(songs.index)) )
+            print ("finish the last batch")
+            break
     
