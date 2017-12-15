@@ -12,8 +12,8 @@ cnt_df = pd.crosstab(df.userid,df.traid)
 del df
 print ("release df")
 
-np.save('sp_info_row.npy', cnt_df.index ) # Save info
-np.save('sp_info_col.npy', cnt_df.columns ) # Save info
+np.save('sp_info_usr.npy', cnt_df.index ) # Save info
+np.save('sp_info_tra.npy', cnt_df.columns ) # Save info
 print ("save sp_info")
 
 save_npz('sparse_matrix.npz',csr_matrix(cnt_df.values)) # Save sp

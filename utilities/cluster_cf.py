@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
+import pandas as pd
 import time
 
 
@@ -23,10 +24,8 @@ def cluster_usr(rate_mat, k=1, min_rate=0.1, add_rate=0.01):
     def get_zero_loc(usr_rate):
         rate = np.sum(usr_rate,axis=1)[0,0] / N_item
         # print ("fill rate:",rate)
-        if rate > min_rate:
-            return [] # full enough
-        # index = np.random.choice(np.where(usr_rate[0,:] == 0)[0], int(N_item * 0.1), replace=False)
-
+        if rate > min_rate: # full enough
+            return []
         idx = np.random.choice(N_item, int(N_item * add_rate), replace=False)
         vec = np.zeros((1, N_item),dtype=bool)  # sp no vector
         vec[0,idx] = 1
@@ -47,19 +46,28 @@ def cluster_usr(rate_mat, k=1, min_rate=0.1, add_rate=0.01):
         #         rate_mat[i, loc] = user_cluster_c[i_cls, loc]
     print("filling took {} sec".format(time.time() - start_time))
 
-def cluster_item(rate_mat, k=1, min_rate=0.1, add_rate=0.01):
+def get_lyrics_vec(tra_idx):
+    tra2vec_df = pd.read_csv("data/song_word2vec/song_word2vec_whole_part1.csv")
+    print (tra_idx)
+
+def get_lyrics_vec_test(tra_idx):
+    tra2vec_df = pd.read_csv("data/song_word2vec/song_word2vec.csv")
+    print (tra_idx,tra2vec_df.head(10))
+
+def cluster_item(rate_mat, sp_tra, k=1, min_rate=0.1, add_rate=0.01):
     # Retrieve lyrics
     # Vector sets, cluster
 
-    N_user, N_item = rate_mat.shape
-    print ("Matrix: {}x{}" .format(N_user, N_item))
-    start_time = time.time()
-    kmeans = KMeans(n_clusters=k, random_state=0).fit(rate_mat.T)
-    user_labels, user_cluster_c = kmeans.labels_, kmeans.cluster_centers_
-    print("k-means (k={}) took {} sec".format(k, time.time() - start_time))
+    name = get_lyrics_vec_test(sp_tra)
 
-
+    # N_user, N_item = rate_mat.shape
+    # print ("Matrix: {}x{}" .format(N_user, N_item))
+    # start_time = time.time()
+    # kmeans = KMeans(n_clusters=k, random_state=0).fit(rate_mat.T)
+    # user_labels, user_cluster_c = kmeans.labels_, kmeans.cluster_centers_
+    # print("k-means (k={}) took {} sec".format(k, time.time() - start_time))
     pass
+
 
 
 if __name__ == "__main__":
