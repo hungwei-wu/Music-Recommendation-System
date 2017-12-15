@@ -2,9 +2,11 @@ import numpy as np
 from sklearn.decomposition import TruncatedSVD
 from scipy.sparse.linalg import svds
 from scipy.sparse import csr_matrix
+from sklearn.metrics.pairwise import pairwise_distances
 
 
-def predict(user_item, similarity):
+def predict(user_item):
+    similarity = pairwise_distances(user_item)
     user_item = user_item.todense()
     mean_x = np.mean(user_item, axis=1)
     mean_diff = user_item - mean_x
@@ -27,7 +29,12 @@ def predict_by_factorize(user_item):
 
 def recommend_all(user_item, pred):
     user_item = user_item.todense()
-    unseen = user_item == 0
-    
-    print(np.inner(user_item, unseen))
+    unseen_mask = user_item == 0
+
+    unseen = np.ma.multiply(pred, unseen_mask)
+    return np.argsort(-unseen, axis=1)
+
+
+
+
 
