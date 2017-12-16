@@ -66,11 +66,12 @@ def hit(recommend_music,num_in_user,file,first_user,mode): # mode = 'uni' return
 
     #print(hit_rate)
     print("avg of hit rate: {0}".format(sum(hit_rate)/len(hit_rate)))
-    print(nov_rate)
+    #print(nov_rate)
+    print("avg of nov rate: {0}".format(sum(nov_rate) / len(nov_rate)))
     count = 0
     for i in listen_numbers:
-        if(i >= 1):
-            print(count,i)
+        #if(i >= 1):
+        #    print(count,i)
         count = count + 1
     hit_prob = sum(hit_rate) / len(hit_rate)
     if(mode == 'uni'):

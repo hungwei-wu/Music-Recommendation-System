@@ -20,6 +20,7 @@ class Preprocessor(object):
         if self.valid_songs:
             df = df[df["traname"].isin(self.valid_songs)]
         #df = self._create_track_id2(df)
+        #print(len(set(df["traname"].values)))
         users = df.groupby('userid')['traname']
         for user_id, grouped_value in users:
             self.user_song_dict[user_id].update(Counter(grouped_value))
@@ -31,9 +32,7 @@ class Preprocessor(object):
 
     def _create_track_id2(self, df):
         """(experimenting) create unique id by (artname, traname) pair"""
-        #df["trackid2"] = df.apply(lambda row: hash(row["artname"] + row["traname"]), axis=1).astype('int64')
         df["trackid2"] = df.apply(lambda row: row["artname"] + row["traname"], axis=1)
-        #df["trackid2"] = df.apply(lambda row: row["traname"], axis=1)
         return df
 
     def reset_file_reader(self, chunks):
