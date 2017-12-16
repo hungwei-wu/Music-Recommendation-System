@@ -3,10 +3,12 @@ from scipy.sparse import load_npz
 import numpy as np
 import time
 import pandas as pd
-
+import sys
 
 if __name__ == "__main__":
-
+    
+    if sys.version_info[0]==2:
+        sys.exit("Use python3")
     # Load matrix (sparse)
     # Which one?
     sp = load_npz('./utilities/sp/train/uid_tname/sparse_matrix.npz')
@@ -15,7 +17,7 @@ if __name__ == "__main__":
     print ("uid_tname nonzero rate: {}".format(sp.count_nonzero()/(sp.shape[0]*sp.shape[1])))
     
     word2vec_df = pd.read_csv("data/song_word2vec/song_word2vec_tfidfweight.csv")
-    word2vec_df = pd.read_csv("data/song_word2vec_whole_truncate_50000_new.csv")
+    word2vec_df = pd.read_csv("data/song_word2vec/song_word2vec_whole_truncate_50000_new.csv")
     reduce_mat,encode_mat = cluster_cf.user_encode(sp, sp_tra, word2vec_df)
     print ("sp matrix size:",sp.shape)
     print ("encoded matrix size:",reduce_mat.shape)
