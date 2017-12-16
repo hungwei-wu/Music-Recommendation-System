@@ -5,14 +5,20 @@ from scipy.sparse import csr_matrix
 from sklearn.metrics.pairwise import pairwise_distances
 
 
-def predict(user_item):
-    similarity = pairwise_distances(user_item)
+def predict_by_user(user_item):
+    #similarity = pairwise_distances(user_item)
     user_item = user_item.todense()
     mean_x = np.mean(user_item, axis=1)
     mean_diff = user_item - mean_x
+    similarity = pairwise_distances(mean_diff, metric='cosine')
     pred = mean_x + similarity.dot(mean_diff) / np.array([np.abs(similarity).sum(axis=1)]).T
     return pred
 
+
+def predict_by_item(user_item):
+    similarity = pairwise_distances(user_item.T, metric='cosine')
+    pred = user_item.dot(similarity) / np.array([np.abs(similarity).sum(axis=1)])
+    return pred
 
 def predict_by_factorize(user_item):
     # svd = TruncatedSVD(n_components=3)
