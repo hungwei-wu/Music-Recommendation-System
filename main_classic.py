@@ -23,11 +23,11 @@ if __name__ == "__main__":
     pre.reset_file_reader(chunks)
 
     # read user song mapping
-    pre.read_user_songs(30000000)
+    pre.read_user_songs(3000000)
     # convert to user-song matrix
     X = pre.get_user_song_matrix()
 
-    pred = recommendation.predict_by_item(X)
+    pred = recommendation.predict_by_factorize(X)
 
     #pred = recommendation.predict_by_factorize(X)
     recommended = recommendation.recommend_all(X, pred)

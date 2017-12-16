@@ -20,6 +20,7 @@ def predict_by_item(user_item):
     pred = user_item.dot(similarity) / np.array([np.abs(similarity).sum(axis=1)])
     return pred
 
+
 def predict_by_factorize(user_item):
     # svd = TruncatedSVD(n_components=3)
     #
