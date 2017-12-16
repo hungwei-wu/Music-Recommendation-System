@@ -1,3 +1,10 @@
 __pycache__/
 *.tsv
 .idea/
+*.bin
+*.pyc
+venv/
+.ipynb_checkpoints/
+
+lastfm-dataset-1K/
+song_word2vec/

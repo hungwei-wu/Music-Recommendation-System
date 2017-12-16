@@ -33,7 +33,7 @@ class LyricsProcessor(object):
     def word2vec(self, n_word_features = 5):
         sorted_x = sorted(self.tfidf_vectorizer.vocabulary_.items(), key=operator.itemgetter(1))
         Tf_idf =  self.TfIdf_vec.todense()
-        pretrain_model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)  
+        pretrain_model = gensim.models.KeyedVectors.load_word2vec_format('data/GoogleNews-vectors-negative300.bin', binary=True)
         for i in range(len(Tf_idf)) :
             row = np.squeeze(np.asarray(Tf_idf[i]))
             sort_index = row.argsort()[::-1][:n_word_features]
