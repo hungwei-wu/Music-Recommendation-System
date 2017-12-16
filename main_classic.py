@@ -19,7 +19,9 @@ if __name__ == "__main__":
     #chunks = file_io.read_lastfm_user_art_file("data/test_shorter.tsv")
     chunks = file_io.read_lastfm_user_art_file("data/halfid_20%_train.tsv")
 
-    pre = Preprocessor(chunks, vectorizer)
+    valid_songs = file_io.get_all_valid_songs('data/song_word2vec_whole_truncate_50000_new.csv')
+    #valid_songs = ['Womanizer']
+    pre = Preprocessor(chunks, vectorizer, valid_songs)
     pre.reset_file_reader(chunks)
 
     # read user song mapping

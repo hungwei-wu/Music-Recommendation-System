@@ -5,10 +5,11 @@ import numpy as np
 
 
 class Preprocessor(object):
-    def __init__(self, chunks, vectorizer):
+    def __init__(self, chunks, vectorizer, valid_songs=[]):
         self.chunks = chunks
         self.vectorizer = vectorizer
         self.user_song_dict = defaultdict(Counter)
+        self.valid_songs = valid_songs
 
     def read_songs(self, n_record):
         df = self.chunks.read(n_record)
@@ -16,7 +17,8 @@ class Preprocessor(object):
 
     def read_user_songs(self, n_records):
         df = self.chunks.read(n_records)
-
+        if self.valid_songs:
+            df = df[df["traname"].isin(self.valid_songs)]
         #df = self._create_track_id2(df)
         users = df.groupby('userid')['traname']
         for user_id, grouped_value in users:
