@@ -7,6 +7,7 @@ from preprocessing.preprocessor import Preprocessor
 from model import recommendation
 import numpy as np
 from metrics import evaluation
+from utilities import cluster_cf
 
 
 if __name__ == "__main__":
@@ -18,7 +19,7 @@ if __name__ == "__main__":
     chunks = file_io.read_lastfm_user_art_file("data/halfid_20%_train.tsv")
 
     valid_songs = []    # don't filter with valid songs
-    valid_songs = file_io.get_all_valid_songs('data/song_word2vec_whole_truncate_50000_new.csv')
+    #valid_songs = file_io.get_all_valid_songs('data/song_word2vec_whole_truncate_50000_new.csv')
 
     pre = Preprocessor(chunks, vectorizer, valid_songs)
     pre.reset_file_reader(chunks)
@@ -27,8 +28,11 @@ if __name__ == "__main__":
     pre.read_user_songs(3000000)
     # convert to user-song matrix
     X = pre.get_user_song_matrix()
+    print("non zeros: {0}".format(X.count_nonzero()))
     print("pre-processed in {0:2f} sec".format(time.time() - start_time))
 
+    cluster_cf.cluster_usr(X, k=5)
+    print("non zeros: {0}".format(X.count_nonzero()))
     pred = recommendation.predict_by_user(X)
 
     #pred = recommendation.predict_by_factorize(X)
