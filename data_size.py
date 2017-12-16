@@ -67,5 +67,5 @@ def data_select (chunk,fold,user_select,file): #fold = can generate percentage o
                     break
 
 
-data_select(5,5,500,'data/userid-timestamp-artid-artname-traid-traname.tsv')
+data_select(5,5,500,'data/test_shorter.tsv')
 
