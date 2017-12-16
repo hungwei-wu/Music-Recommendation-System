@@ -46,6 +46,8 @@ def hit(recommend_music,num_in_user,file,first_user,mode): # mode = 'uni' return
         Input = tsvin.readlines()
         for row in Input:
             row = row.rstrip('\n').split('\t')
+            if(user_index >= len(recommend_music)-1):
+                break
             if (cur_user != row[0]):
                 cur_user = row[0]
                 listen,hit,novelty = hit_count(recommend_music,num_in_user,user_list,user_index)
@@ -65,7 +67,11 @@ def hit(recommend_music,num_in_user,file,first_user,mode): # mode = 'uni' return
     #print(hit_rate)
     print("avg of hit rate: {0}".format(sum(hit_rate)/len(hit_rate)))
     print(nov_rate)
-    print(listen_numbers)
+    count = 0
+    for i in listen_numbers:
+        if(i >= 1):
+            print(count,i)
+        count = count + 1
     hit_prob = sum(hit_rate) / len(hit_rate)
     if(mode == 'uni'):
         return hit_prob,listen_numbers
