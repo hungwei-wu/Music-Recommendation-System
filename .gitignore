@@ -6,6 +6,8 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 *.ipynb
+*.swp
+*.log
 
 lastfm-dataset-1K/
 song_word2vec/
