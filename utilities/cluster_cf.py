@@ -6,7 +6,6 @@ import time
 import numpy as np
 from scipy.sparse import coo_matrix, lil_matrix
 
-
 def get_lyrics_dict(sp_tra,df):
     #df = pd.read_csv("data/song_word2vec/song_word2vec_tfidfweight.csv")
     #tra2vec_df = df.rename(columns={ df.columns[0] : 'traname'}).set_index("traname")
@@ -49,7 +48,47 @@ def user_encode(sp, sp_tra,word2vec_df):
             weight_vec += score * tra2vec_dict[ tra[loc] ]
             weight_sum += score
         encode_mat[i] = weight_vec / weight_sum
-    return rate_mat,encode_mat
+    return rate_mat,encode_mat,tra
+
+def recommend_all(user_item,pred):
+    """
+    user_item.todense()
+    pred.todense()
+
+    unseen_mask = user_item == 0
+    unseen = np.ma.multiply(pred,unseen_mask)
+    return np.argsort(-unseen, axis=1)
+    """
+
+    cand = user_item != pred
+    loc = cand.nonzero()
+    rec = np.zeros((500, 43635))
+    pred = pred.todense()
+    print ("fill",len(loc[0]))
+    #for i in range(len(loc[0])):
+    #    rec[loc[0][i],loc[1][i]] = pred[loc[0][i],loc[1][i]]
+    rec[loc] = pred[loc]
+    return np.argsort(-rec, axis=1)
+    
+    """ 
+    rec_mat = np.zeros((user_item.shape[0],n_top))
+    for i_usr in user_item:
+        ui_loc = user_item[i_usr].nonzero()[1]
+        pred_loc = pred[i_usr].nonzero()[1]
+        rec_set = set(pre_loc.tolist()) - set(ui_loc.tolist())
+        print (len(ui_loc[1]),len(pred_loc[1]),len(rec_set))
+    """
+
+def get_songs_by_indices(mat,tra,n_top=3):
+    # Transform evaluation result
+    # idx to string
+    mat = mat[:,:n_top]
+    N_usr,N_top = mat.shape
+    songs = np.copy(mat).tolist()
+    for i in range(N_usr):
+        for j in range(N_top):
+            songs[i][j] = tra[mat[i,j]]
+    return songs
 
 def user_kmeans(rate_mat, k=1):
     # Clustering using of users
