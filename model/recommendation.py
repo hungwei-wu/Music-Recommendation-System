@@ -37,10 +37,8 @@ def predict_by_factorize(user_item):
 def recommend_all(user_item, pred):
     user_item = user_item.todense()
     unseen_mask = user_item == 0
-    print ("dense")
 
     unseen = np.ma.multiply(pred, unseen_mask)
-    print ("multiply")
     return np.argsort(-unseen, axis=1)
 
 

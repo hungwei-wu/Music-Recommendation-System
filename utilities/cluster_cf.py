@@ -34,6 +34,7 @@ def sp_shrink(sp,sp_tra,word2vec_dict):
 def user_encode(sp, sp_tra,word2vec_df):
     # Retrieve lyrics vec
     # Return user-vec matrix
+    
     tra2vec_dict = get_lyrics_dict(sp_tra,word2vec_df)
     rate_mat,tra = sp_shrink(sp,sp_tra,tra2vec_dict)
     
@@ -51,33 +52,13 @@ def user_encode(sp, sp_tra,word2vec_df):
     return rate_mat,encode_mat,tra
 
 def recommend_all(user_item,pred):
-    """
-    user_item.todense()
-    pred.todense()
-
-    unseen_mask = user_item == 0
-    unseen = np.ma.multiply(pred,unseen_mask)
-    return np.argsort(-unseen, axis=1)
-    """
-
     cand = user_item != pred
     loc = cand.nonzero()
-    rec = np.zeros((500, 43635))
+    rec = np.zeros(pred.shape)
     pred = pred.todense()
     print ("fill",len(loc[0]))
-    #for i in range(len(loc[0])):
-    #    rec[loc[0][i],loc[1][i]] = pred[loc[0][i],loc[1][i]]
     rec[loc] = pred[loc]
     return np.argsort(-rec, axis=1)
-    
-    """ 
-    rec_mat = np.zeros((user_item.shape[0],n_top))
-    for i_usr in user_item:
-        ui_loc = user_item[i_usr].nonzero()[1]
-        pred_loc = pred[i_usr].nonzero()[1]
-        rec_set = set(pre_loc.tolist()) - set(ui_loc.tolist())
-        print (len(ui_loc[1]),len(pred_loc[1]),len(rec_set))
-    """
 
 def get_songs_by_indices(mat,tra,n_top=3):
     # Transform evaluation result
@@ -100,13 +81,13 @@ def user_kmeans(rate_mat, k=1):
     print("---k-means (k={}) took {} sec---".format(k, time.time() - start_time))
     return usr_labels, usr_cluster_c
 
-def fill_matrix(rate_mat,usr_labels,min_rate=0.5, add_rate=0.01):
+def fill_matrix(rate_mat,usr_labels,fill_rate=0.3):
     def get_zero_loc(usr_rate):
         rate = usr_rate.count_nonzero() / N_item
         #print ("fill rate:",rate)
-        if rate > min_rate: # full enough
+        if rate > fill_rate: # full enough
             return []
-        idx = np.random.choice(N_item, int(np.ceil(N_item*add_rate)), replace=False)
+        idx = np.random.choice(N_item, int(np.ceil(N_item*fill_rate)), replace=False)
         vec = np.zeros((1, N_item),dtype=bool)  # sp no vector
         vec[0,idx] = 1
 
