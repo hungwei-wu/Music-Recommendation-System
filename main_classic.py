@@ -19,7 +19,7 @@ if __name__ == "__main__":
     chunks = file_io.read_lastfm_user_art_file("data/halfid_20%_train.tsv")
 
     valid_songs = []    # don't filter with valid songs
-    #valid_songs = file_io.get_all_valid_songs('data/song_word2vec_whole_truncate_50000_new.csv')
+    valid_songs = file_io.get_all_valid_songs('data/song_word2vec_whole_truncate_60000_new.csv')
 
     pre = Preprocessor(chunks, vectorizer, valid_songs)
     pre.reset_file_reader(chunks)
@@ -39,6 +39,13 @@ if __name__ == "__main__":
     recommended = recommendation.recommend_all(X, pred)
     songs = pre.get_songs_by_indices(recommended, 3)
     print("user 1 top recommended songs: {0}".format(songs[0]))
-    print("prediction in {0:2f} sec".format(time.time() - start_time))
+    #print("prediction in {0:2f} sec".format(time.time() - start_time))
     evaluation.hit(songs, 3, 'data/halfid_20%_test.tsv', 'user_000001', 'uni')
+
+    evaluation.RS_coverage_variation(songs)
+    evaluation.diversity(songs, 'data/song_word2vec_whole_truncate_60000_new.csv')
+    evaluation.hit(songs, 3, 'data/halfid_20%_train.tsv', 'user_000001', 'nov')
+    songs = pre.get_songs_by_indices(recommended, 80)
+    evaluation.catlalog_coverage(40000, songs)
+
     print("program finish in {0:2f} sec".format(time.time() - start_time))
