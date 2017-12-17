@@ -34,12 +34,14 @@ def predict_by_factorize(user_item):
     return pred
 
 
-def recommend_all(user_item, pred):
+def recommend_all(user_item, pred, masked=True):
     user_item = user_item.todense()
-    unseen_mask = user_item == 0
-
-    unseen = np.ma.multiply(pred, unseen_mask)
-    return np.argsort(-unseen, axis=1)
+    if masked:
+        unseen_mask = user_item == 0
+        scores = np.ma.multiply(pred, unseen_mask)
+    else:
+        scores = user_item
+    return np.argsort(-scores, axis=1)
 
 
 

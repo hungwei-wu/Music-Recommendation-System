@@ -29,24 +29,25 @@ if __name__ == "__main__":
     # convert to user-song matrix
     X = pre.get_user_song_matrix()
     print("non zeros: {0}".format(X.count_nonzero()))
-    print("pre-processed in {0:2f} sec".format(time.time() - start_time))
+    print("pre-processed in {0:.2f} sec".format(time.time() - start_time))
 
-    cluster_cf.cluster_usr(X, k=5)
+    #cluster_cf.cluster_usr(X, k=5)
     print("non zeros: {0}".format(X.count_nonzero()))
     pred = recommendation.predict_by_user(X)
 
     #pred = recommendation.predict_by_factorize(X)
-    recommended = recommendation.recommend_all(X, pred)
-    songs = pre.get_songs_by_indices(recommended, 3)
+    recommended = recommendation.recommend_all(X, pred, masked=False)
+    recommend_numbers = 5
+    songs = pre.get_songs_by_indices(recommended, recommend_numbers)
     print("user 1 top recommended songs: {0}".format(songs[0]))
-    print("predict in {0:2f} sec".format(time.time() - start_time))
+    print("predict in {0:.2f} sec".format(time.time() - start_time))
 
-    evaluation.hit(songs, 3, 'data/halfid_20%_test.tsv', 'user_000001', 'uni')
+    evaluation.hit(songs, recommend_numbers, 'data/halfid_20%_test.tsv', 'user_000001', 'uni')
 
     evaluation.RS_coverage_variation(songs)
     evaluation.diversity(songs, 'data/song_word2vec_whole_truncate_60000_new.csv')
     evaluation.hit(songs, 3, 'data/halfid_20%_train.tsv', 'user_000001', 'nov')
     songs = pre.get_songs_by_indices(recommended, 80)
-    evaluation.catlalog_coverage(40000, songs)
+    evaluation.catlalog_coverage(60000, songs)
 
-    print("program finish in {0:2f} sec".format(time.time() - start_time))
+    print("program finish in {0:.2f} sec".format(time.time() - start_time))

@@ -33,7 +33,7 @@ def hit_count(recommend_music,num_in_user,user_list,user_index):
                 else:
                     listen_count = listen_count + 1
     return listen_count, (hit_count / (num_in_user)) , \
-           (len(user_list) / hit_count) / len(user_list) if hit_count != 0 else 1
+           (len(user_list) / (hit_count+1)) / len(user_list) if hit_count != 0 else 1
 
 def hit(recommend_music,num_in_user,file,first_user,mode): # mode = 'uni' return unitary validation (use test set file), mode = 'nov' return novelty use tran + test set
     user_list = []
@@ -72,10 +72,10 @@ def hit(recommend_music,num_in_user,file,first_user,mode): # mode = 'uni' return
         count = count + 1
     hit_prob = sum(hit_rate) / len(hit_rate)
     if(mode == 'uni'):
-        print("avg of hit rate: {0}".format(sum(hit_rate) / len(hit_rate)))
+        print("avg of hit rate: {0:.4f}".format(sum(hit_rate) / len(hit_rate)))
         return hit_prob,listen_numbers
     elif(mode == 'nov'):
-        print("avg of nov rate: {0}".format(sum(nov_rate) / len(nov_rate)))
+        print("avg of nov rate: {0:.4f}".format(sum(nov_rate) / len(nov_rate)))
         return sum(nov_rate)/len(nov_rate),listen_numbers
 
 
@@ -90,7 +90,7 @@ def diversity(recommend_music, vec_file):
                 if (k>j):
                     cos_sim.append(cosine_similarity([vec_list[j],vec_list[k]])[0][1])
         user_sim.append((sum(cos_sim)/len(cos_sim)))
-    print("avg of diversity :{0}".format(sum(user_sim) / len(user_sim)))
+    print("avg of diversity :{0:.4f}".format(sum(user_sim) / len(user_sim)))
     return (sum(user_sim) / len(user_sim))
 
 def read_vec(song_request,df):
