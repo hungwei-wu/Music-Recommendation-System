@@ -40,6 +40,7 @@ if __name__ == "__main__":
     songs = pre.get_songs_by_indices(recommended, 3)
     print("user 1 top recommended songs: {0}".format(songs[0]))
     print("predict in {0:2f} sec".format(time.time() - start_time))
+
     evaluation.hit(songs, 3, 'data/halfid_20%_test.tsv', 'user_000001', 'uni')
 
     evaluation.RS_coverage_variation(songs)
